@@ -1,42 +1,11 @@
+# Use the official Nginx image from Docker Hub
+FROM nginx:alpine
 
-# Stage 1: Development/Build Stage
-FROM node:18-alpine AS builder
+# Copy your custom HTML files to Nginx’s web root
+COPY ./html /usr/share/nginx/html
 
-# Set working directory
-WORKDIR /app
+# Expose port 80 for HTTP traffic
+EXPOSE 80
 
-# Install necessary build dependencies
-RUN apk add --no-cache python3 make g++
-
-# Copy package files
-COPY package*.json ./
-
-# Install dependencies
-RUN npm ci
-
-# Copy all project files
-COPY . .
-
-# Build the Next.js application
-RUN npm run build
-
-# Stage 2: Production Stage
-FROM node:18-alpine AS runner
-
-# Set working directory
-WORKDIR /app
-
-# Copy necessary files from builder stage
-COPY --from=builder /app/.next/standalone ./
-COPY --from=builder /app/.next/static ./.next/static
-COPY --from=builder /app/public ./public
-
-# Set environment variables
-ENV NODE_ENV=production
-ENV PORT=3000
-
-# Expose the port the app runs on
-EXPOSE 3000
-
-# Command to run the application
-CMD ["node", "server.js"]
+# Start Nginx (default command provided by the base image)
+CMD ["nginx", "-g", "daemon off;"]

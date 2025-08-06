@@ -1,11 +1,15 @@
-# Use the official Nginx image from Docker Hub
+# Use the lightweight Nginx image
 FROM nginx:alpine
 
-# Copy your custom HTML files to Nginx’s web root
+# Copy your static website files (HTML, CSS, etc.)
 COPY ./html /usr/share/nginx/html
 
-# Expose port 80 for HTTP traffic
+# Optional: Copy custom nginx config file
+# Uncomment if you have ./nginx/nginx.conf
+# COPY ./nginx/nginx.conf /etc/nginx/nginx.conf
+
+# Expose port 80
 EXPOSE 80
 
-# Start Nginx (default command provided by the base image)
+# Start Nginx (default command from base image)
 CMD ["nginx", "-g", "daemon off;"]
